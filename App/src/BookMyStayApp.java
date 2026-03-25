@@ -4,25 +4,41 @@ import java.util.Map;
 public class BookMyStayApp {
   public static void main(String[] args) {
     RoomInventory inventory = new RoomInventory();
-
     inventory.updateAvailability("Single", 5);
     inventory.updateAvailability("Double", 3);
-    inventory.updateAvailability("Suite", 2);
+    inventory.updateAvailability("Suite", 0);
 
-    Map<String, Integer> currentInventory = inventory.getRoomAvailability();
+    Room single = new SingleRoom();
+    Room doubleRm = new DoubleRoom();
+    Room suite = new SuiteRoom();
 
-    for (String type : currentInventory.keySet()) {
-      Room room;
-      if (type.equals("Single"))
-        room = new SingleRoom();
-      else if (type.equals("Double"))
-        room = new DoubleRoom();
-      else
-        room = new SuiteRoom();
+    SearchService searchService = new SearchService();
 
-      System.out.println(type + " Room:");
-      room.displayDetails();
-      System.out.println("Available Rooms: " + currentInventory.get(type) + "\n");
+    System.out.println("--- Room Search Results ---");
+    searchService.searchAvailableRooms(inventory, single, doubleRm, suite);
+  }
+}
+
+class SearchService {
+  public void searchAvailableRooms(RoomInventory inventory, Room single, Room doubleRm, Room suite) {
+    Map<String, Integer> availability = inventory.getRoomAvailability();
+
+    if (availability.getOrDefault("Single", 0) > 0) {
+      System.out.println("Single Room:");
+      single.displayDetails();
+      System.out.println("Available: " + availability.get("Single") + "\n");
+    }
+
+    if (availability.getOrDefault("Double", 0) > 0) {
+      System.out.println("Double Room:");
+      doubleRm.displayDetails();
+      System.out.println("Available: " + availability.get("Double") + "\n");
+    }
+
+    if (availability.getOrDefault("Suite", 0) > 0) {
+      System.out.println("Suite Room:");
+      suite.displayDetails();
+      System.out.println("Available: " + availability.get("Suite") + "\n");
     }
   }
 }
@@ -59,7 +75,7 @@ abstract class Room {
 
 class SingleRoom extends Room {
   public SingleRoom() {
-    super(1, 200, 1500.0);
+    super(1, 250, 1500.0);
   }
 }
 
